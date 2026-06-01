@@ -3,93 +3,196 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>RepMax – E-posta Doğrulandı</title>
+  <title>RepMax</title>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
+      min-height: 100vh; display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
       background: linear-gradient(135deg, #f0d4cb, #e2d6ee, #cfddf0);
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
       padding: 24px;
     }
     .card {
-      background: rgba(255,255,255,0.85);
-      backdrop-filter: blur(20px);
-      border-radius: 24px;
-      padding: 48px 40px;
-      max-width: 400px;
-      width: 100%;
-      text-align: center;
-      box-shadow: 0 8px 40px rgba(0,0,0,0.10);
+      background: rgba(255,255,255,0.85); backdrop-filter: blur(20px);
+      border-radius: 24px; padding: 48px 40px; max-width: 400px; width: 100%;
+      text-align: center; box-shadow: 0 8px 40px rgba(0,0,0,0.10);
       border: 1px solid rgba(255,255,255,0.9);
     }
-    .logo {
-      width: 140px;
-      margin-bottom: 32px;
+    .logo { width: 140px; margin-bottom: 24px; }
+    .badge {
+      display: inline-block; background: rgba(232,56,12,0.10); color: #E8380C;
+      font-size: 12px; font-weight: 700; letter-spacing: 1.5px;
+      padding: 4px 12px; border-radius: 20px;
+      border: 1px solid rgba(232,56,12,0.20); margin-bottom: 28px;
     }
     .check {
-      width: 72px;
-      height: 72px;
+      width: 72px; height: 72px;
       background: linear-gradient(135deg, #22c55e, #16a34a);
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin: 0 auto 24px;
-      box-shadow: 0 0 24px rgba(34,197,94,0.4);
+      border-radius: 50%; display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 24px; box-shadow: 0 0 24px rgba(34,197,94,0.4);
     }
-    .check svg {
-      width: 36px;
-      height: 36px;
+    .check svg { width: 36px; height: 36px; }
+    .err-icon {
+      width: 72px; height: 72px; background: rgba(232,56,12,0.12);
+      border: 2px solid rgba(232,56,12,0.4); border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 24px; font-size: 36px;
     }
-    h1 {
-      font-size: 22px;
-      font-weight: 800;
-      color: #161310;
-      margin-bottom: 12px;
+    h1 { font-size: 22px; font-weight: 800; color: #161310; margin-bottom: 8px; }
+    p { font-size: 14px; color: #4A443F; line-height: 1.6; margin-bottom: 8px; }
+    .sub { font-size: 13px; color: #7A726B; margin-top: 24px; }
+    .input-wrap { margin-bottom: 14px; text-align: left; margin-top: 24px; }
+    label {
+      display: block; font-size: 10px; font-weight: 700; letter-spacing: 1.5px;
+      color: #7A726B; margin-bottom: 8px;
     }
-    p {
-      font-size: 15px;
-      color: #4A443F;
-      line-height: 1.6;
-      margin-bottom: 8px;
+    input {
+      width: 100%; padding: 14px 16px; border-radius: 12px;
+      border: 1.5px solid rgba(0,0,0,0.12); background: rgba(255,255,255,0.9);
+      font-size: 15px; color: #161310; outline: none; transition: border-color 0.2s;
     }
-    .sub {
-      font-size: 13px;
-      color: #7A726B;
-      margin-top: 24px;
+    input:focus { border-color: #E8380C; }
+    button {
+      width: 100%; padding: 16px; background: #E8380C; color: white;
+      border: none; border-radius: 14px; font-size: 15px; font-weight: 700;
+      cursor: pointer; margin-top: 8px; box-shadow: 0 0 20px rgba(232,56,12,0.35);
     }
-    .badge {
-      display: inline-block;
-      background: rgba(232,56,12,0.10);
-      color: #E8380C;
-      font-size: 12px;
-      font-weight: 700;
-      letter-spacing: 1.5px;
-      padding: 4px 12px;
-      border-radius: 20px;
-      border: 1px solid rgba(232,56,12,0.20);
-      margin-bottom: 20px;
-    }
+    button:disabled { opacity: 0.5; cursor: not-allowed; }
+    .msg { margin-top: 16px; font-size: 14px; font-weight: 600; min-height: 20px; }
+    .msg.ok { color: #2E8C5E; }
+    .msg.err { color: #E8380C; }
+    .hidden { display: none !important; }
   </style>
 </head>
 <body>
   <div class="card">
     <img class="logo" src="https://muratbdk35.github.io/repmax-legal/repmax.png" alt="RepMax" onerror="this.style.display='none'">
     <div class="badge">HYPERTROPHY TRACKER</div>
-    <div class="check">
-      <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
-        <polyline points="20 6 9 17 4 12"/>
-      </svg>
+
+    <!-- E-posta doğrulandı görünümü -->
+    <div id="view-confirmed" class="hidden">
+      <div class="check">
+        <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+      </div>
+      <h1>E-posta Doğrulandı! ✓</h1>
+      <p>Hesabın başarıyla onaylandı.</p>
+      <p>Artık RepMax uygulamasını açabilirsin.</p>
+      <p class="sub">Bu sayfayı kapatıp uygulamaya dönebilirsin.</p>
     </div>
-    <h1>E-posta Doğrulandı! ✓</h1>
-    <p>Hesabın başarıyla onaylandı.</p>
-    <p>Artık RepMax uygulamasını açabilirsin.</p>
-    <p class="sub">Bu sayfayı kapatıp uygulamaya dönebilirsin.</p>
+
+    <!-- Şifre sıfırlama formu -->
+    <div id="view-reset" class="hidden">
+      <h1>Yeni Şifre Belirle</h1>
+      <p>Aşağıya yeni şifreni gir.</p>
+      <div class="input-wrap">
+        <label>YENİ ŞİFRE</label>
+        <input type="password" id="password" placeholder="••••••••" minlength="6"/>
+      </div>
+      <div class="input-wrap">
+        <label>ŞİFRE TEKRAR</label>
+        <input type="password" id="password2" placeholder="••••••••" minlength="6"/>
+      </div>
+      <button id="btn" onclick="handleReset()">Şifreyi Güncelle</button>
+      <div class="msg" id="msg"></div>
+    </div>
+
+    <!-- Hata görünümü -->
+    <div id="view-error" class="hidden">
+      <div class="err-icon">⚠️</div>
+      <h1 id="err-title">Link Geçersiz</h1>
+      <p id="err-desc">Bu link süresi dolmuş veya geçersiz. Uygulamadan yeni bir link iste.</p>
+    </div>
+
+    <!-- Yükleniyor -->
+    <div id="view-loading">
+      <p>Yükleniyor...</p>
+    </div>
   </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script>
+    const { createClient } = supabase;
+    const sb = createClient(
+      'https://kwvbkilslrbjtzfllxvc.supabase.co',
+      'sb_publishable_AS7xt1EBxhNRuWS1vaVaqw_RBwYdcK_',
+      { auth: { detectSessionInUrl: true } }
+    );
+
+    function show(id) {
+      ['view-confirmed','view-reset','view-error','view-loading'].forEach(v=>{
+        document.getElementById(v).classList.toggle('hidden', v!==id);
+      });
+    }
+
+    (async () => {
+      const hash = new URLSearchParams(window.location.hash.replace('#',''));
+      const query = new URL(window.location.href).searchParams;
+
+      // 1. Hata var mı?
+      const errCode = hash.get('error_code') || query.get('error_code');
+      const errDesc = hash.get('error_description') || query.get('error_description');
+      if (errCode) {
+        show('view-error');
+        if (errCode === 'otp_expired') {
+          document.getElementById('err-desc').textContent = 'Bu linkin süresi dolmuş. Uygulamadan yeni bir link iste.';
+        } else if (errDesc) {
+          document.getElementById('err-desc').textContent = decodeURIComponent(errDesc.replace(/\+/g,' '));
+        }
+        return;
+      }
+
+      // 2. Tür ne? (recovery = şifre sıfırlama, signup/magiclink = doğrulama)
+      const type = hash.get('type') || query.get('type');
+      const accessToken = hash.get('access_token');
+      const refreshToken = hash.get('refresh_token');
+      const code = query.get('code');
+
+      // Session'ı kur
+      let ok = false;
+      try {
+        if (code) {
+          const { error } = await sb.auth.exchangeCodeForSession(code);
+          ok = !error;
+        } else if (accessToken && refreshToken) {
+          const { error } = await sb.auth.setSession({ access_token: accessToken, refresh_token: refreshToken });
+          ok = !error;
+        } else {
+          const { data } = await sb.auth.getSession();
+          ok = !!data?.session;
+        }
+      } catch(e) { console.log(e); }
+
+      if (type === 'recovery') {
+        if (ok) show('view-reset');
+        else { show('view-error'); document.getElementById('err-desc').textContent='Şifre sıfırlama oturumu kurulamadı. Yeni link iste.'; }
+      } else {
+        // signup / email confirm
+        show('view-confirmed');
+      }
+    })();
+
+    async function handleReset() {
+      const pw = document.getElementById('password').value;
+      const pw2 = document.getElementById('password2').value;
+      const btn = document.getElementById('btn');
+      const msg = document.getElementById('msg');
+
+      if (pw.length < 6) { msg.className='msg err'; msg.textContent='Şifre en az 6 karakter olmalı.'; return; }
+      if (pw !== pw2) { msg.className='msg err'; msg.textContent='Şifreler eşleşmiyor.'; return; }
+
+      btn.disabled = true; btn.textContent = 'Güncelleniyor...';
+      const { error } = await sb.auth.updateUser({ password: pw });
+
+      if (error) {
+        msg.className='msg err'; msg.textContent = 'Hata: ' + error.message;
+        btn.disabled = false; btn.textContent = 'Şifreyi Güncelle';
+      } else {
+        document.getElementById('view-reset').innerHTML =
+          '<div class="check"><svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>' +
+          '<h1>Şifren Güncellendi! ✓</h1><p>Uygulamayı açıp yeni şifrenle giriş yapabilirsin.</p>';
+      }
+    }
+  </script>
 </body>
 </html>
